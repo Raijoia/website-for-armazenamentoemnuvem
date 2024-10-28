@@ -1,0 +1,107 @@
+{
+  "editor.defaultFormatter": "biomejs.biome",
+  "editor.fontFamily": "JetBrains Mono",
+  "editor.lineHeight": 1.8,
+  "editor.fontWeight": "400",
+  "diffEditor.wordWrap": "on",
+
+  "bracket-pair-colorizer-2.depreciation-notice": false,
+  "tabnine.experimentalAutoImports": true,
+  "cSpell.dictionaryDefinitions": [],
+  "cSpell.languageSettings": [],
+  "explorer.confirmDelete": false,
+  "liveServer.settings.donotShowInfoMsg": true,
+  "workbench.editor.autoLockGroups": {
+    "default": true
+  },
+  "ipynb.experimental.pasteImages.enabled": true,
+  "editor.unicodeHighlight.ambiguousCharacters": false,
+  "vscode-edge-devtools.webhint": false,
+  "git.autofetch": true,
+  "editor.largeFileOptimizations": false,
+  "security.workspace.trust.untrustedFiles": "open",
+  "cSpell.userWords": ["endereco", "genero", "gradient", "rocketseat"],
+  "workbench.startupEditor": "none",
+  "liveServer.settings.donotVerifyTags": true,
+  "workbench.tree.indent": 15,
+
+  "cSpell.language": "pt,pt-BR",
+
+  // editor
+  "editor.wordWrap": "on",
+  "editor.fontSize": 18,
+  "editor.tabSize": 2,
+  "editor.guides.bracketPairs": true,
+  "editor.minimap.enabled": false,
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.endOfLine": "lf",
+
+  // explorer
+  "explorer.compactFolders": false,
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "package.json": ".eslint*, .prettier*, tsconfig*, vite*, pnpm-lock*, package-lock*, bun.lockb*",
+    "tailwind.config*": "tailwind.config*, postcss.cofnig*",
+    ".env.local": ".env*",
+    ".env": ".env*"
+  },
+
+  // workbench
+  "workbench.editor.enablePreview": false,
+  "workbench.iconTheme": "symbols",
+  "workbench.colorTheme": "Min Dark",
+  "editor.renderLineHighlight": "gutter",
+  "editor.fontLigatures": true,
+  "workbench.editor.labelFormat": "short",
+  "editor.semanticHighlighting.enabled": false,
+
+  // prettier
+  "prettier.enable": true,
+  "prettier.singleQuote": true,
+  "prettier.endOfLine": "lf",
+  "prettier.tabWidth": 2,
+  "prettier.semi": true,
+  "prettier.triggerExpansionOnTab": true,
+  "eslint.alwaysShowStatus": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+
+  // terminal
+  "terminal.integrated.fontSize": 16,
+  "terminal.integrated.profiles.windows": {
+    "Git Bash": {
+      "source": "Git Bash"
+    }
+  },
+  "terminal.integrated.defaultProfile.windows": "Git Bash",
+  "editor.bracketPairColorization.enabled": true,
+  "terminal.integrated.fontFamily": "JetBrains Mono",
+
+  "CodeGPT.query.language": "Portuguese",
+  "chatgpt.lang": "pt-br",
+  "emmet.includeLanguages": {
+    "javascript": "javascriptreact",
+    "java": "java",
+    "typescript": "typescriptreact"
+  },
+  "emmet.triggerExpansionOnTab": true,
+  "css.lint.unknownAtRules": "ignore",
+
+  "java.codeGeneration.generateComments": true,
+  "java.codeGeneration.hashCodeEquals.useInstanceof": true,
+  "intellicodeApiExamples.loggingLevel": "ALL",
+  "html-css-class-completion.enableEmmetSupport": true,
+  "npm-intellisense.scanDevDependencies": true,
+  "npm-intellisense.showBuildInLibs": true,
+  "editor.cursorBlinking": "expand",
+  "editor.cursorWidth": 2,
+  "editor.cursorSmoothCaretAnimation": "on",
+  "breadcrumbs.enabled": false,
+  "workbench.editor.empty.hint": "hidden",
+  "symbols.hidesExplorerArrows": false,
+  "workbench.activityBar.location": "hidden",
+  "material-icon-theme.folders.theme": "classic",
+  "files.autoSave": "afterDelay"
+}
