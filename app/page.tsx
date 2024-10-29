@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { CloudIcon, Menu, X } from 'lucide-react'
-import type { responseType } from '@/pages/api/searchTenantDomain' 
+import type { responseType } from '@/pages/api/searchTenantDomain'
 
 export default function Component() {
   const [domain, setDomain] = useState('')
@@ -18,7 +18,7 @@ export default function Component() {
       if (!response.ok) {
         throw new Error(`Erro: ${response.status}`)
       }
-      const result = await response.json() as responseType
+      const result = (await response.json()) as responseType
 
       setSearchResult(result)
     } catch (error) {
@@ -99,7 +99,7 @@ export default function Component() {
       {isMenuOpen && (
         // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
         // biome-ignore lint/style/useSelfClosingElements: <explanation>
-          <div
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-30"
           onClick={toggleMenu}
           aria-hidden="true"
