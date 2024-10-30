@@ -20,33 +20,11 @@ import {
   CalendarIcon,
   DollarSignIcon,
 } from 'lucide-react'
-
-const fetchCnpjData = async (cnpj: string) => {
-  await new Promise(resolve => setTimeout(resolve, 1000))
-  return {
-    cnpj: cnpj,
-    razaoSocial: 'Empresa Exemplo LTDA',
-    nomeFantasia: 'Exemplo Comércio',
-    dataAbertura: '2005-03-21',
-    situacaoCadastral: 'Ativa',
-    endereco: {
-      logradouro: 'Rua das Flores',
-      numero: '123',
-      complemento: 'Sala 45',
-      bairro: 'Centro',
-      municipio: 'São Paulo',
-      uf: 'SP',
-      cep: '01234-567',
-    },
-    telefone: '(11) 1234-5678',
-    email: 'contato@exemplo.com',
-    capitalSocial: 100000.0,
-  }
-}
+import type { EmpresaType } from '@/interface/responseCNPJType'
 
 export default function CnpjLookup() {
   const [cnpj, setCnpj] = useState('')
-  const [cnpjData, setCnpjData] = useState(null)
+  const [cnpjData, setCnpjData] = useState<EmpresaType | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -57,8 +35,9 @@ export default function CnpjLookup() {
     setCnpjData(null)
 
     try {
-      const data = await fetchCnpjData(cnpj)
-      setCnpjData(data)
+      const responseData = await fetch(`/api/searchCNPJ?cnpj=${cnpj}`)
+      const result = (await responseData.json()) as EmpresaType
+      setCnpjData(result)
     } catch (err) {
       setError('Falha ao buscar dados do CNPJ. Por favor, tente novamente.')
     } finally {
@@ -133,29 +112,29 @@ export default function CnpjLookup() {
                   <InfoCard
                     icon={<BuildingIcon className="w-5 h-5" />}
                     title="Razão Social"
-                    value={cnpjData.razaoSocial}
+                    value={cnpjData.razao_social}
                   />
                   <InfoCard
                     icon={<BuildingIcon className="w-5 h-5" />}
                     title="Nome Fantasia"
-                    value={cnpjData.nomeFantasia}
+                    value={cnpjData.nome_fantasia}
                   />
                   <InfoCard
                     icon={<CalendarIcon className="w-5 h-5" />}
                     title="Data de Abertura"
-                    value={new Date(cnpjData.dataAbertura).toLocaleDateString(
+                    value={new Date(cnpjData.data_inicio_atividade).toLocaleDateString(
                       'pt-BR'
                     )}
                   />
                   <InfoCard
                     icon={<BuildingIcon className="w-5 h-5" />}
                     title="Situação Cadastral"
-                    value={cnpjData.situacaoCadastral}
+                    value={cnpjData.descricao_situacao_cadastral}
                   />
                   <InfoCard
                     icon={<DollarSignIcon className="w-5 h-5" />}
                     title="Capital Social"
-                    value={cnpjData.capitalSocial.toLocaleString('pt-BR', {
+                    value={cnpjData.capital_social.toLocaleString('pt-BR', {
                       style: 'currency',
                       currency: 'BRL',
                     })}
@@ -171,14 +150,14 @@ export default function CnpjLookup() {
                       <h4 className="font-medium">Localização</h4>
                     </div>
                     <p className="text-gray-800">
-                      {cnpjData.endereco.logradouro}, {cnpjData.endereco.numero}
-                      {cnpjData.endereco.complemento &&
-                        `, ${cnpjData.endereco.complemento}`}
+                      {cnpjData.logradouro}, {cnpjData.numero}
+                      {cnpjData.complemento &&
+                        `, ${cnpjData.complemento}`}
                       <br />
-                      {cnpjData.endereco.bairro} - {cnpjData.endereco.municipio}{' '}
-                      - {cnpjData.endereco.uf}
+                      {cnpjData.bairro} - {cnpjData.municipio}{' '}
+                      - {cnpjData.uf}
                       <br />
-                      CEP: {cnpjData.endereco.cep}
+                      CEP: {cnpjData.cep}
                     </p>
                   </div>
                 </div>
@@ -190,12 +169,12 @@ export default function CnpjLookup() {
                     <InfoCard
                       icon={<PhoneIcon className="w-5 h-5" />}
                       title="Telefone"
-                      value={cnpjData.telefone}
+                      value={cnpjData.ddd_telefone_1}
                     />
                     <InfoCard
                       icon={<MailIcon className="w-5 h-5" />}
                       title="E-mail"
-                      value={cnpjData.email}
+                      value={cnpjData.email as string}
                     />
                   </div>
                 </div>
