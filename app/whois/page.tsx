@@ -38,6 +38,7 @@ export default function WhoisLookup() {
       const result = (await response.json()) as whoisType
 
       setWhoisData(result)
+      setIsLoading(false)
     } catch (error) {
       console.error('Error searching domain:', error)
     }
@@ -48,9 +49,6 @@ export default function WhoisLookup() {
     setIsLoading(true)
     setError('')
     fetchWhoisData(domain)
-    setTimeout(() => {
-      setIsLoading(false)
-    }, 2000)
   }
 
   const toggleMenu = () => {
@@ -123,7 +121,7 @@ export default function WhoisLookup() {
           aria-hidden="true"
         ></div>
       )}
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto container px-4 py-16">
         <header className="text-center mb-12">
           <GlobeIcon className="inline-block w-16 h-16 text-blue-500 mb-4" />
           <h1 className="text-4xl font-bold text-gray-900 mb-2">WHOIS</h1>
@@ -194,7 +192,7 @@ export default function WhoisLookup() {
                     title="Data de expiração"
                     value={new Date(
                       whoisData.WhoisRecord.registryData.expiresDate
-                    ).toDateString()}
+                    ).toLocaleDateString()}
                   />
                 </div>
                 <div className="mt-6">
