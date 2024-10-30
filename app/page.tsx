@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { CloudIcon, Menu, X } from 'lucide-react'
-import type { responseType } from '@/pages/api/searchTenantDomain'
+import type { responseType } from '@/interface/responseType'
 
 export default function Component() {
   const [domain, setDomain] = useState('')

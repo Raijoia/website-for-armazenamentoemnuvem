@@ -1,12 +1,6 @@
+import type { responseType } from '@/interface/responseType';
 import axios from 'axios'
 import type { NextApiRequest, NextApiResponse } from 'next'
-
-export type responseType = {
-  error?: string
-  id?: string
-  domainName?: string
-  enterprise?: string
-}
 
 export default async function handler(
   req: NextApiRequest,

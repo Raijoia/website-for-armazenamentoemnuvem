@@ -20,7 +20,7 @@ import {
   X,
   Menu,
 } from 'lucide-react'
-import type { whoisType } from '@/pages/api/searchWhois'
+import type { whoisType } from '@/interface/whoisType'
 
 export default function WhoisLookup() {
   const [domain, setDomain] = useState('')
