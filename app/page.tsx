@@ -71,20 +71,21 @@ export default function Component() {
             </li>
             <li>
               <a
+                href="/busqueCNPJ"
+                className="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded"
+              >
+                Busque por CNPJ
+              </a>
+            </li>
+            <li>
+              <a
                 href="/whois"
                 className="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded"
               >
                 Whois
               </a>
             </li>
-            <li>
-              <a
-                href="/about"
-                className="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded"
-              >
-                Sobre a empresa
-              </a>
-            </li>
+
             <li>
               <a
                 href="/contact"

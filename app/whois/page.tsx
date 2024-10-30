@@ -87,18 +87,18 @@ export default function WhoisLookup() {
             </li>
             <li>
               <a
-                href="/whois"
+                href="/busqueCNPJ"
                 className="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded"
               >
-                Whois
+                Busque por CNPJ
               </a>
             </li>
             <li>
               <a
-                href="/about"
+                href="/whois"
                 className="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded"
               >
-                Sobre a empresa
+                Whois
               </a>
             </li>
             <li>
