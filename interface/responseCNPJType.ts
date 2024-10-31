@@ -47,6 +47,7 @@ export type EmpresaType = {
   descricao_tipo_de_logradouro: string
   descricao_motivo_situacao_cadastral: string
   descricao_identificador_matriz_filial: string
+  error?: string
 }
 
 type Socio = {
