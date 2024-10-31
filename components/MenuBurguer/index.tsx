@@ -1,5 +1,6 @@
 import { Menu, X } from 'lucide-react'
 import { useState } from 'react'
+import List from './List'
 
 export default function MenuBurguer() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -30,38 +31,10 @@ export default function MenuBurguer() {
       >
         <nav className="p-4 mt-16">
           <ul className="space-y-2">
-            <li>
-              <a
-                href="/"
-                className="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded"
-              >
-                Busque Tenant
-              </a>
-            </li>
-            <li>
-              <a
-                href="/busqueCNPJ"
-                className="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded"
-              >
-                Busque por CNPJ
-              </a>
-            </li>
-            <li>
-              <a
-                href="/whois"
-                className="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded"
-              >
-                Whois
-              </a>
-            </li>
-            <li>
-              <a
-                href="/contact"
-                className="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded"
-              >
-                Contato
-              </a>
-            </li>
+            <List directory="/" name="Busque Tenant" />
+            <List directory="/busqueCNPJ" name="Busque por CNPJ" />
+            <List directory="/whois" name="Whois" />
+            <List directory="/contact" name="Contato" />
           </ul>
         </nav>
       </div>
