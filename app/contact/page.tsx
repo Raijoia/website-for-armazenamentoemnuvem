@@ -20,16 +20,28 @@ import {
   CheckCircleIcon,
 } from 'lucide-react'
 import MenuBurguer from '@/components/MenuBurguer'
+import type { responseMailType } from '@/interface/responseMailType'
 
-// Assume esta função existe e envia os dados do formulário de contato para uma API
 const enviarFormularioContato = async (dadosFormulario: {
   nome: string
   email: string
   mensagem: string
-}) => {
-  // Chamada de API simulada
-  await new Promise(resolve => setTimeout(resolve, 1000))
-  return { sucesso: true }
+}): Promise<responseMailType> => {
+  const sendMail = await fetch('/api/sendMail', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      nome: dadosFormulario.nome,
+      email: dadosFormulario.email,
+      mensagem: dadosFormulario.mensagem,
+    }),
+  })
+
+  const result = (await sendMail.json()) as responseMailType
+
+  return result
 }
 
 export default function PaginaContato() {
