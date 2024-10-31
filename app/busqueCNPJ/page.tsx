@@ -19,6 +19,8 @@ import {
   MailIcon,
   CalendarIcon,
   DollarSignIcon,
+  X,
+  Menu,
 } from 'lucide-react'
 import type { EmpresaType } from '@/interface/responseCNPJType'
 
@@ -27,6 +29,11 @@ export default function CnpjLookup() {
   const [cnpjData, setCnpjData] = useState<EmpresaType | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -52,6 +59,70 @@ export default function CnpjLookup() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white p-6 relative font-sans">
+      {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
+      <button
+        onClick={toggleMenu}
+        className="fixed top-4 left-4 z-50 p-2 rounded-md text-gray-500 hover:text-blue-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+        aria-expanded={isMenuOpen}
+      >
+        <span className="sr-only">Toggle menu</span>
+        {isMenuOpen ? (
+          <X className="h-6 w-6" aria-hidden="true" />
+        ) : (
+          <Menu className="h-6 w-6" aria-hidden="true" />
+        )}
+      </button>
+      <div
+        className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-40 ${
+          isMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        <nav className="p-4 mt-16">
+          <ul className="space-y-2">
+            <li>
+              <a
+                href="/"
+                className="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded"
+              >
+                Busque tenant
+              </a>
+            </li>
+            <li>
+              <a
+                href="/busqueCNPJ"
+                className="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded"
+              >
+                Busque por CNPJ
+              </a>
+            </li>
+            <li>
+              <a
+                href="/whois"
+                className="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded"
+              >
+                Whois
+              </a>
+            </li>
+            <li>
+              <a
+                href="/contact"
+                className="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded"
+              >
+                Contato
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      {isMenuOpen && (
+        // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
+        // biome-ignore lint/style/useSelfClosingElements: <explanation>
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-30"
+          onClick={toggleMenu}
+          aria-hidden="true"
+        ></div>
+      )}
       <div className="max-w-4xl container mx-auto px-4 py-16">
         <header className="text-center mb-12">
           <BuildingIcon className="inline-block w-16 h-16 text-blue-500 mb-4" />
@@ -122,9 +193,9 @@ export default function CnpjLookup() {
                   <InfoCard
                     icon={<CalendarIcon className="w-5 h-5" />}
                     title="Data de Abertura"
-                    value={new Date(cnpjData?.data_inicio_atividade).toLocaleDateString(
-                      'pt-BR'
-                    )}
+                    value={new Date(
+                      cnpjData?.data_inicio_atividade
+                    ).toLocaleDateString('pt-BR')}
                   />
                   <InfoCard
                     icon={<BuildingIcon className="w-5 h-5" />}
@@ -151,11 +222,9 @@ export default function CnpjLookup() {
                     </div>
                     <p className="text-gray-800">
                       {cnpjData.logradouro}, {cnpjData.numero}
-                      {cnpjData.complemento &&
-                        `, ${cnpjData.complemento}`}
+                      {cnpjData.complemento && `, ${cnpjData.complemento}`}
                       <br />
-                      {cnpjData.bairro} - {cnpjData.municipio}{' '}
-                      - {cnpjData.uf}
+                      {cnpjData.bairro} - {cnpjData.municipio} - {cnpjData.uf}
                       <br />
                       CEP: {cnpjData.cep}
                     </p>
