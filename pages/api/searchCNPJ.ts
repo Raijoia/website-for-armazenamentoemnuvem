@@ -17,12 +17,10 @@ export default async function handler(
 
   try {
     const response = await axios.request(options)
-    console.log(response)
     return res.status(200).json(response.data)
 
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   } catch (error: any) {
-    console.error('An error occurred:', error)
     return res.status(500).json({ error: 'An internal error occurred.' })
   }
 }

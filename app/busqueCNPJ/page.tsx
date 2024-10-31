@@ -37,17 +37,17 @@ export default function CnpjLookup() {
     try {
       const responseData = await fetch(`/api/searchCNPJ?cnpj=${cnpj}`)
       const result = (await responseData.json()) as EmpresaType
-      setCnpjData(result)
+
+      if(result?.error) {
+        setError('Falha ao buscar dados do CNPJ. Por favor, tente novamente.')
+      } else {
+        setCnpjData(result)
+      }
     } catch (err) {
       setError('Falha ao buscar dados do CNPJ. Por favor, tente novamente.')
     } finally {
       setIsLoading(false)
     }
-  }
-
-  const formatCnpj = (value: string) => {
-    const cnpjRegex = /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/
-    return value.replace(cnpjRegex, '$1.$2.$3/$4-$5')
   }
 
   return (
@@ -107,34 +107,34 @@ export default function CnpjLookup() {
                   <InfoCard
                     icon={<BuildingIcon className="w-5 h-5" />}
                     title="CNPJ"
-                    value={formatCnpj(cnpjData.cnpj)}
+                    value={cnpjData?.cnpj}
                   />
                   <InfoCard
                     icon={<BuildingIcon className="w-5 h-5" />}
                     title="Razão Social"
-                    value={cnpjData.razao_social}
+                    value={cnpjData?.razao_social}
                   />
                   <InfoCard
                     icon={<BuildingIcon className="w-5 h-5" />}
                     title="Nome Fantasia"
-                    value={cnpjData.nome_fantasia}
+                    value={cnpjData?.nome_fantasia}
                   />
                   <InfoCard
                     icon={<CalendarIcon className="w-5 h-5" />}
                     title="Data de Abertura"
-                    value={new Date(cnpjData.data_inicio_atividade).toLocaleDateString(
+                    value={new Date(cnpjData?.data_inicio_atividade).toLocaleDateString(
                       'pt-BR'
                     )}
                   />
                   <InfoCard
                     icon={<BuildingIcon className="w-5 h-5" />}
                     title="Situação Cadastral"
-                    value={cnpjData.descricao_situacao_cadastral}
+                    value={cnpjData?.descricao_situacao_cadastral}
                   />
                   <InfoCard
                     icon={<DollarSignIcon className="w-5 h-5" />}
                     title="Capital Social"
-                    value={cnpjData.capital_social.toLocaleString('pt-BR', {
+                    value={cnpjData?.capital_social?.toLocaleString('pt-BR', {
                       style: 'currency',
                       currency: 'BRL',
                     })}
