@@ -42,104 +42,108 @@ export default function ConsultaDNS() {
   const formatarRegistros = (data: any): DNSRecord[] => {
     const registrosFormatados: DNSRecord[] = []
 
-    if (data.A) {
-      // biome-ignore lint/complexity/noForEach: <explanation>
-      data.A.forEach((valor: string) => {
-        registrosFormatados.push({
-          Tipo: 'A',
-          Nome: dominio,
-          Valor: valor,
+    try {
+      if (data.A && Array.isArray(data.A)) {
+        // biome-ignore lint/complexity/noForEach: <explanation>
+        data.A.forEach((valor: string) => {
+          registrosFormatados.push({
+            Tipo: 'A',
+            Nome: dominio,
+            Valor: valor,
+          })
         })
+      }
+
+      registrosFormatados.push({
+        Tipo: 'AAAA',
+        Nome: dominio,
+        Valor: data.AAAA || 'No AAAA records found or an error occurred.',
       })
-    }
 
-    registrosFormatados.push({
-      Tipo: 'AAAA',
-      Nome: dominio,
-      Valor: data.AAAA || 'No AAAA records found or an error occurred.',
-    })
+      registrosFormatados.push({
+        Tipo: 'CNAME',
+        Nome: dominio,
+        Valor: data.CNAME || 'No CNAME records found or an error occurred.',
+      })
 
-    registrosFormatados.push({
-      Tipo: 'CNAME',
-      Nome: dominio,
-      Valor: data.CNAME || 'No CNAME records found or an error occurred.',
-    })
-
-    if (data.MX && Array.isArray(data.MX)) {
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      // biome-ignore lint/complexity/noForEach: <explanation>
-      data.MX.forEach((mx: any) => {
-        registrosFormatados.push({
-          Tipo: 'MX',
-          Nome: dominio,
-          Valor: `valor: ${mx.exchange} | prioridade: ${mx.priority}`,
+      if (data.MX && Array.isArray(data.MX)) {
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        // biome-ignore lint/complexity/noForEach: <explanation>
+        data.MX.forEach((mx: any) => {
+          registrosFormatados.push({
+            Tipo: 'MX',
+            Nome: dominio,
+            Valor: `valor: ${mx.exchange} | prioridade: ${mx.priority}`,
+          })
         })
-      })
-    }
+      }
 
-    if (data.NS && Array.isArray(data.NS)) {
-      // biome-ignore lint/complexity/noForEach: <explanation>
-      data.NS.forEach((ns: string) => {
-        registrosFormatados.push({
-          Tipo: 'NS',
-          Nome: dominio,
-          Valor: ns,
+      if (data.NS && Array.isArray(data.NS)) {
+        // biome-ignore lint/complexity/noForEach: <explanation>
+        data.NS.forEach((ns: string) => {
+          registrosFormatados.push({
+            Tipo: 'NS',
+            Nome: dominio,
+            Valor: ns,
+          })
         })
-      })
-    }
+      }
 
-    if (data.TXT && Array.isArray(data.TXT)) {
-      // biome-ignore lint/complexity/noForEach: <explanation>
-      data.TXT.forEach((txt: string[]) => {
-        registrosFormatados.push({
-          Tipo: 'TXT',
-          Nome: dominio,
-          Valor: txt.join(''),
+      if (data.TXT && Array.isArray(data.TXT)) {
+        // biome-ignore lint/complexity/noForEach: <explanation>
+        data.TXT.forEach((txt: string[]) => {
+          registrosFormatados.push({
+            Tipo: 'TXT',
+            Nome: dominio,
+            Valor: txt.join(''),
+          })
         })
+      }
+
+      registrosFormatados.push({
+        Tipo: 'SRV',
+        Nome: dominio,
+        Valor: data.SRV || 'No SRV records found or an error occurred.',
       })
-    }
 
-    registrosFormatados.push({
-      Tipo: 'SRV',
-      Nome: dominio,
-      Valor: data.SRV || 'No SRV records found or an error occurred.',
-    })
+      registrosFormatados.push({
+        Tipo: 'PTR',
+        Nome: dominio,
+        Valor: data.PTR || 'No PTR records found or an error occurred.',
+      })
 
-    registrosFormatados.push({
-      Tipo: 'PTR',
-      Nome: dominio,
-      Valor: data.PTR || 'No PTR records found or an error occurred.',
-    })
-
-    if (data.SOA) {
-      const soa = data.SOA
-      registrosFormatados.push(
-        {
-          Tipo: 'SOA',
-          Nome: 'nsname',
-          Valor: soa.nsname,
-        },
-        {
-          Tipo: 'SOA',
-          Nome: 'hostmaster',
-          Valor: soa.hostmaster,
-        },
-        {
-          Tipo: 'SOA',
-          Nome: 'serial',
-          Valor: soa.serial.toString(),
-        },
-        {
-          Tipo: 'SOA',
-          Nome: 'refresh',
-          Valor: soa.refresh.toString(),
-        },
-        {
-          Tipo: 'SOA',
-          Nome: 'retry',
-          Valor: soa.retry.toString(),
-        }
-      )
+      if (data.SOA) {
+        const soa = data.SOA
+        registrosFormatados.push(
+          {
+            Tipo: 'SOA',
+            Nome: 'nsname',
+            Valor: soa.nsname,
+          },
+          {
+            Tipo: 'SOA',
+            Nome: 'hostmaster',
+            Valor: soa.hostmaster,
+          },
+          {
+            Tipo: 'SOA',
+            Nome: 'serial',
+            Valor: soa.serial.toString(),
+          },
+          {
+            Tipo: 'SOA',
+            Nome: 'refresh',
+            Valor: soa.refresh.toString(),
+          },
+          {
+            Tipo: 'SOA',
+            Nome: 'retry',
+            Valor: soa.retry.toString(),
+          }
+        )
+      }
+    } catch (error) {
+      console.log(error)
     }
 
     return registrosFormatados
