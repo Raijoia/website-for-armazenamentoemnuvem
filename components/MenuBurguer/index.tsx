@@ -34,6 +34,7 @@ export default function MenuBurguer() {
             <List directory="/" name="Busque Tenant" />
             <List directory="/busqueCNPJ" name="Busque por CNPJ" />
             <List directory="/whois" name="Whois" />
+            <List directory="/toolbox" name="Toolbox" />
             <List directory="/contact" name="Contato" />
           </ul>
         </nav>
