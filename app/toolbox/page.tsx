@@ -19,132 +19,102 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { GlobeIcon, SearchIcon } from 'lucide-react'
-import type { DNSRecord, responseDNSType } from '@/interface/responseDNSType'
+import { GlobeIcon, SearchIcon, FilterIcon } from 'lucide-react'
+import { Checkbox } from '@/components/ui/checkbox'
 import MenuBurguer from '@/components/MenuBurguer'
 
-const buscarRegistrosDNS = async (
-  domain: string
-): Promise<responseDNSType | null> => {
-  const response = await fetch(`/api/searchDNS?domain=${domain}`)
-  const responseData = await response.json()
-
-  return responseData
+interface DNSRecord {
+  Tipo: string
+  Nome: string
+  Valor: string | string[]
+  TTL?: string | number
 }
+
+const DNS_TYPES = ['A', 'AAAA', 'CNAME', 'MX', 'NS', 'TXT', 'SRV', 'PTR', 'SOA']
 
 export default function ConsultaDNS() {
   const [dominio, setDominio] = useState('')
-  const [registros, setRegistros] = useState<responseDNSType | null>()
+  const [registros, setRegistros] = useState<DNSRecord[]>([])
   const [carregando, setCarregando] = useState(false)
   const [erro, setErro] = useState('')
+  const [tiposSelecionados, setTiposSelecionados] =
+    useState<string[]>(DNS_TYPES)
+  const [mostrarFiltros, setMostrarFiltros] = useState(false)
+
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  const formatarValorRegistro = (tipo: string, valor: any): string => {
+    switch (tipo) {
+      case 'MX':
+        try {
+          if (typeof valor === 'object') {
+            return `${valor.exchange} (prioridade: ${valor.priority})`
+          }
+          const mxData = JSON.parse(valor.replace(/'/g, '"'))
+          return `${mxData.exchange} (prioridade: ${mxData.priority})`
+        } catch {
+          return valor
+        }
+      case 'TXT':
+        try {
+          if (Array.isArray(valor)) {
+            return valor.join('')
+          }
+          return valor.replace(/^\["|"\]$/g, '').replace(/\\"/g, '"')
+        } catch {
+          return valor
+        }
+      default:
+        return valor
+    }
+  }
 
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   const formatarRegistros = (data: any): DNSRecord[] => {
     const registrosFormatados: DNSRecord[] = []
 
-    try {
-      if (data.A && Array.isArray(data.A)) {
-        // biome-ignore lint/complexity/noForEach: <explanation>
-        data.A.forEach((valor: string) => {
-          registrosFormatados.push({
-            Tipo: 'A',
-            Nome: dominio,
-            Valor: valor,
-          })
-        })
-      }
+    if (typeof data !== 'object' || data === null) {
+      throw new Error('Dados de DNS inválidos recebidos da API')
+    }
 
-      registrosFormatados.push({
-        Tipo: 'AAAA',
-        Nome: dominio,
-        Valor: data.AAAA || 'No AAAA records found or an error occurred.',
-      })
+    // biome-ignore lint/complexity/noForEach: <explanation>
+    Object.entries(data).forEach(([tipo, valores]) => {
+      if (!tiposSelecionados.includes(tipo)) return
 
-      registrosFormatados.push({
-        Tipo: 'CNAME',
-        Nome: dominio,
-        Valor: data.CNAME || 'No CNAME records found or an error occurred.',
-      })
-
-      if (data.MX && Array.isArray(data.MX)) {
+      if (Array.isArray(valores)) {
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         // biome-ignore lint/complexity/noForEach: <explanation>
-        data.MX.forEach((mx: any) => {
+        valores.forEach((valor: any) => {
           registrosFormatados.push({
-            Tipo: 'MX',
+            Tipo: tipo,
             Nome: dominio,
-            Valor: `valor: ${mx.exchange} | prioridade: ${mx.priority}`,
+            Valor: formatarValorRegistro(tipo, valor),
           })
         })
-      }
-
-      if (data.NS && Array.isArray(data.NS)) {
-        // biome-ignore lint/complexity/noForEach: <explanation>
-        data.NS.forEach((ns: string) => {
-          registrosFormatados.push({
-            Tipo: 'NS',
-            Nome: dominio,
-            Valor: ns,
+      } else if (typeof valores === 'object' && valores !== null) {
+        if (tipo === 'SOA') {
+          // biome-ignore lint/complexity/noForEach: <explanation>
+          Object.entries(valores).forEach(([chave, valor]) => {
+            registrosFormatados.push({
+              Tipo: tipo,
+              Nome: chave,
+              Valor: valor as string,
+            })
           })
+        } else {
+          registrosFormatados.push({
+            Tipo: tipo,
+            Nome: dominio,
+            Valor: formatarValorRegistro(tipo, valores),
+          })
+        }
+      } else {
+        registrosFormatados.push({
+          Tipo: tipo,
+          Nome: dominio,
+          Valor: formatarValorRegistro(tipo, valores),
         })
       }
-
-      if (data.TXT && Array.isArray(data.TXT)) {
-        // biome-ignore lint/complexity/noForEach: <explanation>
-        data.TXT.forEach((txt: string[]) => {
-          registrosFormatados.push({
-            Tipo: 'TXT',
-            Nome: dominio,
-            Valor: txt.join(''),
-          })
-        })
-      }
-
-      registrosFormatados.push({
-        Tipo: 'SRV',
-        Nome: dominio,
-        Valor: data.SRV || 'No SRV records found or an error occurred.',
-      })
-
-      registrosFormatados.push({
-        Tipo: 'PTR',
-        Nome: dominio,
-        Valor: data.PTR || 'No PTR records found or an error occurred.',
-      })
-
-      if (data.SOA) {
-        const soa = data.SOA
-        registrosFormatados.push(
-          {
-            Tipo: 'SOA',
-            Nome: 'nsname',
-            Valor: soa.nsname,
-          },
-          {
-            Tipo: 'SOA',
-            Nome: 'hostmaster',
-            Valor: soa.hostmaster,
-          },
-          {
-            Tipo: 'SOA',
-            Nome: 'serial',
-            Valor: soa.serial.toString(),
-          },
-          {
-            Tipo: 'SOA',
-            Nome: 'refresh',
-            Valor: soa.refresh.toString(),
-          },
-          {
-            Tipo: 'SOA',
-            Nome: 'retry',
-            Valor: soa.retry.toString(),
-          }
-        )
-      }
-    } catch (error) {
-      console.log(error)
-    }
+    })
 
     return registrosFormatados
   }
@@ -156,16 +126,32 @@ export default function ConsultaDNS() {
     setRegistros([])
 
     try {
-      const resultado = await buscarRegistrosDNS(dominio)
-      const registroFormatado = formatarRegistros(resultado)
-      setRegistros(registroFormatado)
+      const response = await fetch(
+        `/api/searchDNS?domain=${encodeURIComponent(dominio)}`
+      )
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Erro ao buscar registros DNS')
+      }
+
+      const registrosFormatados = formatarRegistros(data)
+      setRegistros(registrosFormatados)
     } catch (err) {
+      console.error('Erro ao buscar registros DNS:', err)
       setErro(
         'Ocorreu um erro ao buscar os registros DNS. Por favor, tente novamente.'
       )
+      setRegistros([])
     } finally {
       setCarregando(false)
     }
+  }
+
+  const toggleTipo = (tipo: string) => {
+    setTiposSelecionados(prev =>
+      prev.includes(tipo) ? prev.filter(t => t !== tipo) : [...prev, tipo]
+    )
   }
 
   return (
@@ -211,14 +197,46 @@ export default function ConsultaDNS() {
               </div>
             </form>
 
+            <div className="mt-6">
+              <Button
+                variant="outline"
+                onClick={() => setMostrarFiltros(!mostrarFiltros)}
+                className="w-full justify-between"
+              >
+                Filtrar por tipo de registro DNS
+                <FilterIcon className="w-4 h-4 ml-2" />
+              </Button>
+              {mostrarFiltros && (
+                <div className="mt-4 p-4 bg-gray-50 rounded-md shadow-inner">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    {DNS_TYPES.map(tipo => (
+                      <div key={tipo} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`tipo-${tipo}`}
+                          checked={tiposSelecionados.includes(tipo)}
+                          onCheckedChange={() => toggleTipo(tipo)}
+                        />
+                        <Label
+                          htmlFor={`tipo-${tipo}`}
+                          className="text-sm font-medium cursor-pointer"
+                        >
+                          {tipo}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {erro && (
               <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
                 {erro}
               </div>
             )}
 
-            {registros && (
-              <div className="mt-6">
+            {registros.length > 0 ? (
+              <div className="mt-6 overflow-x-auto">
                 <h3 className="text-lg font-semibold mb-2">
                   Registros DNS para {dominio}:
                 </h3>
@@ -232,22 +250,33 @@ export default function ConsultaDNS() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {registros.map((registro, index) => (
-                      // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-                      <TableRow key={index}>
-                        <TableCell className="font-medium">
-                          {registro.Tipo}
-                        </TableCell>
-                        <TableCell>{registro.Nome}</TableCell>
-                        <TableCell className="max-w-md break-all">
-                          {registro.Valor}
-                        </TableCell>
-                        <TableCell>{registro.TTL || ''}</TableCell>
-                      </TableRow>
-                    ))}
+                    {registros
+                      .filter(registro =>
+                        tiposSelecionados.includes(registro.Tipo)
+                      )
+                      .map((registro, index) => (
+                        // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                        <TableRow key={index}>
+                          <TableCell className="font-medium">
+                            {registro.Tipo}
+                          </TableCell>
+                          <TableCell>{registro.Nome}</TableCell>
+                          <TableCell className="max-w-md break-all">
+                            {registro.Valor}
+                          </TableCell>
+                          <TableCell>{registro.TTL || ''}</TableCell>
+                        </TableRow>
+                      ))}
                   </TableBody>
                 </Table>
               </div>
+            ) : (
+              !carregando &&
+              !erro && (
+                <p className="mt-4 text-gray-600">
+                  Nenhum registro DNS encontrado.
+                </p>
+              )
             )}
           </CardContent>
         </Card>
